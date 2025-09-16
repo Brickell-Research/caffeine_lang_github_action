@@ -2,8 +2,8 @@ FROM alpine:3.18
 
 LABEL "com.github.actions.name"="caffeine_lang"
 LABEL "com.github.actions.description"="Run caffeine_lang in your GitHub Actions workflows"
-LABEL "com.github.actions.icon"="coffee"
-LABEL "com.github.actions.color"="blue"
+LABEL "com.github.actions.icon"="activity"
+LABEL "com.github.actions.color"="green"
 
 # Install dependencies
 RUN apk add --no-cache \
