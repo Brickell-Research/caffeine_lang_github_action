@@ -16,25 +16,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Test with default version (latest)
-        id: test-latest
-        uses: ./
+      - name: Run Caffeine Language Action
+        uses: Brickell-Research/caffeine_lang_github_action@v0.0.1
         with:
           args: "--version"
       
-      - name: Test with specific version (replace with a real version when available)
-        id: test-versioned
-        if: false  # Disabled by default - enable and set version when available
-        uses: ./
-        with:
-          args: "--version"
-          version: "v1.0.0"  # Replace with an actual version number
-      
+      # Additional test steps can be added here as needed
       - name: Test with custom command
         id: test-command
-        uses: ./
+        uses: Brickell-Research/caffeine_lang_github_action@v0.0.1
         with:
-          args: "check --help"  # Replace with actual command you want to test
+          args: "check --help"  # Example command to test
       
       - name: Show test results
         run: |
