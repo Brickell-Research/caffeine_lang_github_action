@@ -1,6 +1,8 @@
 name: 'caffeine_lang'
 description: 'Run caffeine_lang as part of your GitHub Actions workflows'
 author: 'Your Organization'
+icon: 'activity'
+color: 'green'
 
 inputs:
   args:
