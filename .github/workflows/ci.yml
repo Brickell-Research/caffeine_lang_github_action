@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run caffeine_lang check
+        uses: ./  # Uses the action in this repository
+        with:
+          args: "check --strict"
+          # version: "v1.0.0"  # Uncomment to pin to a specific version
+          
+      - name: Run caffeine_lang with custom command
+        uses: ./
+        with:
+          args: "run --option=value"  # Example of another command

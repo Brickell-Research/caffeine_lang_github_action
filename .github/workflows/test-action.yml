@@ -1,0 +1,42 @@
+name: Test Caffeine Action
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  test-action:
+    name: Test Caffeine Action
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Test with default version (latest)
+        id: test-latest
+        uses: ./
+        with:
+          args: "--version"
+      
+      - name: Test with specific version (replace with a real version when available)
+        id: test-versioned
+        if: false  # Disabled by default - enable and set version when available
+        uses: ./
+        with:
+          args: "--version"
+          version: "v1.0.0"  # Replace with an actual version number
+      
+      - name: Test with custom command
+        id: test-command
+        uses: ./
+        with:
+          args: "check --help"  # Replace with actual command you want to test
+      
+      - name: Show test results
+        run: |
+          echo "Latest version test completed"
+          echo "Versioned test was skipped - enable it when you have a specific version to test"
