@@ -1,12 +1,10 @@
 name: 'Caffeine Language GitHub Action'
 description: 'GitHub Action for Caffeine Language'
 author: 'Brickell Research'
-icon: 'activity'
-color: 'green'
 
 branding:
-  icon: 'coffee'  # Using 'coffee' as it's a common icon for Caffeine
-  color: 'blue'   # You can change this to any GitHub-supported color
+  icon: 'activity'
+  color: 'green'
 
 inputs:
   version:
