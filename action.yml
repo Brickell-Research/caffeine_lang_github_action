@@ -1,20 +1,26 @@
-name: 'caffeine_lang'
-description: 'Run caffeine_lang as part of your GitHub Actions workflows'
-author: 'Your Organization'
+name: 'Caffeine Language GitHub Action'
+description: 'GitHub Action for Caffeine Language'
+author: 'Brickell Research'
 icon: 'activity'
 color: 'green'
 
+branding:
+  icon: 'coffee'  # Using 'coffee' as it's a common icon for Caffeine
+  color: 'blue'   # You can change this to any GitHub-supported color
+
 inputs:
-  args:
-    description: 'Arguments to pass to caffeine_lang'
-    required: true
   version:
-    description: 'Version of caffeine_lang to install (e.g., v1.2.3)'
-    required: false
+    description: 'Caffeine version to use'
+    required: true
     default: 'latest'
+  args:
+    description: 'Arguments to pass to the Caffeine command'
+    required: false
+    default: ''
 
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.version }}
     - ${{ inputs.args }}
