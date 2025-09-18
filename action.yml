@@ -9,11 +9,11 @@ branding:
 inputs:
   spec_dir:
     description: 'Directory containing specification files'
-    required: false
+    required: true
     default: '/app/spec'
   inst_dir:
     description: 'Directory containing instantiation files'
-    required: false
+    required: true
     default: '/app/inst'
 
 runs:
