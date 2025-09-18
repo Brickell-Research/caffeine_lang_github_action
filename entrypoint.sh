@@ -1,9 +1,22 @@
 #!/bin/bash
 set -e
 
-# Simple smoke test
-echo "Hello, World!"
-echo "Arguments received: $@"
+echo "Caffeine Language Smoke Test"
+echo "============================="
 
-# Exit with success
-exit 0
+# Change to caffeine project directory
+cd /caffeine
+
+# Run Caffeine compiler smoke test
+echo ""
+echo "Running Caffeine compiler..."
+if gleam run compile; then
+    echo ""
+    echo "✅ Caffeine compiler smoke test PASSED!"
+    echo "Caffeine language is working correctly."
+    exit 0
+else
+    echo ""
+    echo "❌ Caffeine compiler smoke test FAILED!"
+    exit 1
+fi
