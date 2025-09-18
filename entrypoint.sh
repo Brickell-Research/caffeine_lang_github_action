@@ -17,9 +17,8 @@ gleam deps list | grep caffeine_lang || echo "caffeine_lang package not found"
 echo ""
 
 # Create test directories matching the working structure
-ORG_DIR="$SPEC_DIR/some_organization"
-SPEC_SUBDIR="$ORG_DIR/$SPEC_DIR"
-INST_SUBDIR="$ORG_DIR/$INST_DIR"
+SPEC_SUBDIR="$SPEC_DIR"
+INST_SUBDIR="$INST_DIR"
 
 # Run Caffeine compiler with spec and inst directories
 echo ""
