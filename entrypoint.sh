@@ -18,9 +18,9 @@ echo ""
 
 # Create test directories matching the working structure
 ORG_DIR="$SPEC_DIR/some_organization"
-SPEC_SUBDIR="$ORG_DIR/specifications"
-PLATFORM_DIR="$ORG_DIR/platform"
-FRONTEND_DIR="$ORG_DIR/frontend"
+SPEC_SUBDIR="$ORG_DIR/$SPEC_DIR/specifications"
+PLATFORM_DIR="$ORG_DIR/$INST_DIR/platform"
+FRONTEND_DIR="$ORG_DIR/$INST_DIR/frontend"
 mkdir -p "$SPEC_SUBDIR" "$PLATFORM_DIR" "$FRONTEND_DIR"
 
 # Create basic_types.yaml
