@@ -1,18 +1,11 @@
 FROM alpine:3.18
 
-# Install build dependencies
+# Install minimal dependencies
 RUN apk add --no-cache \
     curl \
-    tar \
-    gzip \
     bash \
-    libstdc++ \
-    build-base \
-    git \
     erlang \
     erlang-dev \
-    rust \
-    cargo \
     && rm -rf /var/cache/apk/*
 
 # Install rebar3 manually
@@ -28,12 +21,21 @@ RUN GLEAM_VERSION="v1.11.0" \
     && rm gleam.tar.gz \
     && gleam --version
 
-# Create Gleam project and install Caffeine language from Hex
+# Create Gleam project and set up custom main
 WORKDIR /caffeine
 RUN gleam new . \
+    && gleam add argv \
     && gleam add caffeine_lang \
-    && gleam deps download \
-    && gleam build
+    && gleam deps download
+
+# Copy custom main.gleam
+COPY main.gleam src/caffeine.gleam
+
+# Show caffeine_lang package version
+RUN echo "Caffeine Lang package version:" && gleam deps list | grep caffeine_lang || echo "caffeine_lang package not found"
+
+# Build the project
+RUN gleam build
 
 # Create workspace
 WORKDIR /app
