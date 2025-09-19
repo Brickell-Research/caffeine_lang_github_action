@@ -8,13 +8,13 @@ branding:
 
 inputs:
   spec_dir:
-    description: 'Directory containing specification files'
+    description: 'Directory containing specification files (relative to repository root)'
     required: true
-    default: '/app/spec'
+    default: 'spec'
   inst_dir:
-    description: 'Directory containing instantiation files'
+    description: 'Directory containing instantiation files (relative to repository root)'
     required: true
-    default: '/app/inst'
+    default: 'inst'
 
 runs:
   using: 'docker'

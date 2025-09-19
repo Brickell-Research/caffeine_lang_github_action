@@ -16,19 +16,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Run Caffeine Language Action
-        uses: Brickell-Research/caffeine_lang_github_action@v0.0.1
-        with:
-          args: "--version"
-      
-      # Additional test steps can be added here as needed
-      - name: Test with custom command
-        id: test-command
-        uses: Brickell-Research/caffeine_lang_github_action@v0.0.1
-        with:
-          args: "check --help"  # Example command to test
-      
-      - name: Show test results
+      # Create test directories and files
+      - name: Create test Caffeine files
         run: |
-          echo "Latest version test completed"
-          echo "Versioned test was skipped - enable it when you have a specific version to test"
+          mkdir -p spec inst
+          echo "# Test specification file" > spec/test.spec
+          echo "# Test instantiation file" > inst/test.inst
+      
+      - name: Run Caffeine Language Action
+        uses: ./
+        with:
+          spec_dir: 'spec'
+          inst_dir: 'inst'
+      
+      # Test with different directory structure
+      - name: Test with custom directories
+        run: |
+          mkdir -p my_specs my_insts
+          echo "# Custom spec file" > my_specs/custom.spec
+          echo "# Custom inst file" > my_insts/custom.inst
+      
+      - name: Run with custom directories
+        uses: ./
+        with:
+          spec_dir: 'my_specs'
+          inst_dir: 'my_insts'

@@ -1,14 +1,56 @@
 #!/bin/bash
 set -e
 
-# Get arguments
-SPEC_DIR="${1:-/app/spec}"
-INST_DIR="${2:-/app/inst}"
+# Get arguments (now relative paths from repository)
+SPEC_DIR="${1:-spec}"
+INST_DIR="${2:-inst}"
 
-echo "Caffeine Language Smoke Test"
-echo "============================="
+echo "Caffeine Language Compiler"
+echo "=========================="
 
-# Change to caffeine project directory
+# The repository files are mounted at /github/workspace
+WORKSPACE="/github/workspace"
+
+# Show what's in the workspace
+echo "Repository contents:"
+ls -la "$WORKSPACE"
+echo ""
+
+# Convert relative paths to absolute paths within the workspace
+SPEC_PATH="$WORKSPACE/$SPEC_DIR"
+INST_PATH="$WORKSPACE/$INST_DIR"
+
+echo "Looking for specification files in: $SPEC_PATH"
+echo "Looking for instantiation files in: $INST_PATH"
+
+# Check if directories exist
+if [ ! -d "$SPEC_PATH" ]; then
+    echo "❌ Specification directory not found: $SPEC_PATH"
+    echo "Available directories in repository:"
+    find "$WORKSPACE" -type d -maxdepth 2 | head -10
+    exit 1
+fi
+
+if [ ! -d "$INST_PATH" ]; then
+    echo "❌ Instantiation directory not found: $INST_PATH"
+    echo "Available directories in repository:"
+    find "$WORKSPACE" -type d -maxdepth 2 | head -10
+    exit 1
+fi
+
+echo "✅ Found both directories"
+echo ""
+
+# Show contents of the directories
+echo "Specification files:"
+ls -la "$SPEC_PATH" || echo "Directory is empty or inaccessible"
+echo ""
+
+echo "Instantiation files:"
+ls -la "$INST_PATH" || echo "Directory is empty or inaccessible"
+echo ""
+
+# Change to caffeine project directory for compilation
 cd /caffeine
 
 # Show Caffeine version
@@ -16,20 +58,16 @@ echo "Caffeine version info:"
 gleam deps list | grep caffeine_lang || echo "caffeine_lang package not found"
 echo ""
 
-# Create test directories matching the working structure
-SPEC_SUBDIR="$SPEC_DIR"
-INST_SUBDIR="$INST_DIR"
-
-# Run Caffeine compiler with spec and inst directories
-echo ""
+# Run Caffeine compiler with the repository directories
 echo "Running Caffeine compiler..."
-if gleam run -- compile "$SPEC_SUBDIR" "$INST_SUBDIR"; then
+if gleam run -- compile "$SPEC_PATH" "$INST_PATH"; then
     echo ""
-    echo "✅ Caffeine compiler smoke test PASSED!"
-    echo "Caffeine language is working correctly."
+    echo "✅ Caffeine compilation SUCCESSFUL!"
+    echo "Your Caffeine specifications have been compiled successfully."
     exit 0
 else
     echo ""
-    echo "❌ Caffeine compiler smoke test FAILED!"
+    echo "❌ Caffeine compilation FAILED!"
+    echo "Check your specification and instantiation files for errors."
     exit 1
 fi
