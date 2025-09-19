@@ -4,6 +4,7 @@ set -e
 # Get arguments (now relative paths from repository)
 SPEC_DIR="${1:-spec}"
 INST_DIR="${2:-inst}"
+OUTPUT_DIR="${3:-out}"
 
 echo "Caffeine Language Compiler"
 echo "=========================="
@@ -14,9 +15,11 @@ WORKSPACE="/github/workspace"
 # Convert relative paths to absolute paths within the workspace
 SPEC_PATH="$WORKSPACE/$SPEC_DIR"
 INST_PATH="$WORKSPACE/$INST_DIR"
+OUTPUT_PATH="$WORKSPACE/$OUTPUT_DIR"
 
 echo "Specification directory: $SPEC_PATH"
 echo "Instantiation directory: $INST_PATH"
+echo "Output directory: $OUTPUT_PATH"
 
 # Check if directories exist
 if [ ! -d "$SPEC_PATH" ]; then
@@ -42,7 +45,7 @@ echo ""
 
 # Run Caffeine compiler with the repository directories
 echo "Running Caffeine compiler..."
-if gleam run -- compile "$SPEC_PATH" "$INST_PATH"; then
+if gleam run -- compile "$SPEC_PATH" "$INST_PATH" "$OUTPUT_PATH"; then
     echo ""
     echo "✅ Caffeine compilation SUCCESSFUL!"
     echo "Your Caffeine specifications have been compiled successfully."

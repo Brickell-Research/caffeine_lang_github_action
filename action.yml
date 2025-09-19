@@ -15,6 +15,10 @@ inputs:
     description: 'Directory containing instantiation files (relative to repository root)'
     required: true
     default: 'inst'
+  output_dir:
+    description: 'Directory to output compiled files (relative to repository root)'
+    required: true
+    default: 'out'
 
 runs:
   using: 'docker'
@@ -22,3 +26,4 @@ runs:
   args:
     - ${{ inputs.spec_dir }}
     - ${{ inputs.inst_dir }}
+    - ${{ inputs.output_dir }}
