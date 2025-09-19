@@ -19,25 +19,29 @@ jobs:
       # Create test directories and files
       - name: Create test Caffeine files
         run: |
-          mkdir -p spec inst
+          mkdir -p spec inst out
           echo "# Test specification file" > spec/test.spec
           echo "# Test instantiation file" > inst/test.inst
-      
+          echo "# Test output file" > out/test.out
+
       - name: Run Caffeine Language Action
         uses: ./
         with:
           spec_dir: 'spec'
           inst_dir: 'inst'
+          output_dir: 'out'
       
       # Test with different directory structure
       - name: Test with custom directories
         run: |
-          mkdir -p my_specs my_insts
+          mkdir -p my_specs my_insts my_out
           echo "# Custom spec file" > my_specs/custom.spec
           echo "# Custom inst file" > my_insts/custom.inst
+          echo "# Custom output file" > my_out/custom.out
       
       - name: Run with custom directories
         uses: ./
         with:
           spec_dir: 'my_specs'
           inst_dir: 'my_insts'
+          output_dir: 'my_out'
