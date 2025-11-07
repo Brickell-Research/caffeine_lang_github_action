@@ -14,7 +14,7 @@ RUN curl -Lo rebar3 https://github.com/erlang/rebar3/releases/download/3.22.1/re
     && mv rebar3 /usr/local/bin/
 
 # Install Gleam
-RUN GLEAM_VERSION="v1.11.0" \
+RUN GLEAM_VERSION="v1.13.0" \
     && curl -Lo gleam.tar.gz "https://github.com/gleam-lang/gleam/releases/download/${GLEAM_VERSION}/gleam-${GLEAM_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
     && tar -xzf gleam.tar.gz \
     && mv gleam /usr/local/bin/ \
