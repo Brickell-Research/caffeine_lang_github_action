@@ -23,36 +23,33 @@ echo "Output directory: $OUTPUT_PATH"
 
 # Check if directories exist
 if [ ! -d "$SPEC_PATH" ]; then
-    echo "❌ Specification directory not found: $SPEC_PATH"
+    echo "Error: Specification directory not found: $SPEC_PATH"
     exit 1
 fi
 
 if [ ! -d "$INST_PATH" ]; then
-    echo "❌ Instantiation directory not found: $INST_PATH"
+    echo "Error: Instantiation directory not found: $INST_PATH"
     exit 1
 fi
 
-echo "✅ Found both directories"
+echo "Found both directories"
 echo ""
 
-# Change to caffeine project directory for compilation
-cd /caffeine
-
 # Show Caffeine version
-echo "Caffeine version info:"
-gleam deps list | grep caffeine_lang || echo "caffeine_lang package not found"
+echo "Caffeine version:"
+caffeine --help | head -1 || echo "caffeine binary not found"
 echo ""
 
 # Run Caffeine compiler with the repository directories
 echo "Running Caffeine compiler..."
-if gleam run -- compile "$SPEC_PATH" "$INST_PATH" "$OUTPUT_PATH"; then
+if caffeine compile "$SPEC_PATH" "$INST_PATH" "$OUTPUT_PATH"; then
     echo ""
-    echo "✅ Caffeine compilation SUCCESSFUL!"
+    echo "Caffeine compilation SUCCESSFUL!"
     echo "Your Caffeine specifications have been compiled successfully."
     exit 0
 else
     echo ""
-    echo "❌ Caffeine compilation FAILED!"
+    echo "Caffeine compilation FAILED!"
     echo "Check your specification and instantiation files for errors."
     exit 1
 fi
