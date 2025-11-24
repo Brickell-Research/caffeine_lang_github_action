@@ -16,27 +16,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Test with default version (latest)
-        id: test-latest
-        uses: ./
-        with:
-          args: "--version"
-      
-      - name: Test with specific version (replace with a real version when available)
-        id: test-versioned
-        if: false  # Disabled by default - enable and set version when available
-        uses: ./
-        with:
-          args: "--version"
-          version: "v1.0.0"  # Replace with an actual version number
-      
-      - name: Test with custom command
-        id: test-command
-        uses: ./
-        with:
-          args: "check --help"  # Replace with actual command you want to test
-      
-      - name: Show test results
+      # Create test directories and files
+      - name: Create test Caffeine files
         run: |
-          echo "Latest version test completed"
-          echo "Versioned test was skipped - enable it when you have a specific version to test"
+          mkdir -p spec inst out
+          echo "# Test specification file" > spec/test.spec
+          echo "# Test instantiation file" > inst/test.inst
+          echo "# Test output file" > out/test.out
+
+      - name: Run Caffeine Language Action
+        uses: ./
+        with:
+          spec_dir: 'spec'
+          inst_dir: 'inst'
+          output_dir: 'out'
+      
+      # Test with different directory structure
+      - name: Test with custom directories
+        run: |
+          mkdir -p my_specs my_insts my_out
+          echo "# Custom spec file" > my_specs/custom.spec
+          echo "# Custom inst file" > my_insts/custom.inst
+          echo "# Custom output file" > my_out/custom.out
+      
+      - name: Run with custom directories
+        uses: ./
+        with:
+          spec_dir: 'my_specs'
+          inst_dir: 'my_insts'
+          output_dir: 'my_out'

@@ -1,5 +1,5 @@
-name: 'Caffeine Language GitHub Action'
-description: 'GitHub Action for Caffeine Language'
+name: 'Caffeine Language Action'
+description: 'GitHub Action for leveraging Caffeine compiler.'
 author: 'Brickell Research'
 
 branding:
@@ -7,18 +7,23 @@ branding:
   color: 'green'
 
 inputs:
-  version:
-    description: 'Caffeine version to use'
+  spec_dir:
+    description: 'Directory containing specification files (relative to repository root)'
     required: true
-    default: 'latest'
-  args:
-    description: 'Arguments to pass to the Caffeine command'
-    required: false
-    default: ''
+    default: 'spec'
+  inst_dir:
+    description: 'Directory containing instantiation files (relative to repository root)'
+    required: true
+    default: 'inst'
+  output_dir:
+    description: 'Directory to output compiled files (relative to repository root)'
+    required: true
+    default: 'out'
 
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.version }}
-    - ${{ inputs.args }}
+    - ${{ inputs.spec_dir }}
+    - ${{ inputs.inst_dir }}
+    - ${{ inputs.output_dir }}

@@ -12,13 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Run caffeine_lang check
-        uses: ./  # Uses the action in this repository
-        with:
-          args: "check --strict"
-          # version: "v1.0.0"  # Uncomment to pin to a specific version
-          
-      - name: Run caffeine_lang with custom command
+      # Create test directories and files for CI
+      - name: Create test Caffeine files
+        run: |
+          mkdir -p spec inst out
+          echo "# CI test specification file" > spec/ci_test.spec
+          echo "# CI test instantiation file" > inst/ci_test.inst
+      
+      - name: Run Caffeine Language Action
         uses: ./
         with:
-          args: "run --option=value"  # Example of another command
+          spec_dir: 'spec'
+          inst_dir: 'inst'
+          output_dir: 'out'
