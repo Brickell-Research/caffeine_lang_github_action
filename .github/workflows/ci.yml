@@ -11,17 +11,60 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      # Create test directories and files for CI
+
+      # Create test blueprint and expectation files
       - name: Create test Caffeine files
         run: |
-          mkdir -p spec inst out
-          echo "# CI test specification file" > spec/ci_test.spec
-          echo "# CI test instantiation file" > inst/ci_test.inst
-      
+          mkdir -p expectations output
+
+          # Create a valid blueprint file
+          cat > blueprints.json << 'EOF'
+          {
+            "blueprints": [
+              {
+                "name": "availability_slo",
+                "artifact_ref": "SLO",
+                "inputs": {
+                  "queries": {
+                    "numerator": "sum:http.requests{service:$$service_name$$,!status:5xx}",
+                    "denominator": "sum:http.requests{service:$$service_name$$}"
+                  },
+                  "value": "numerator / denominator",
+                  "vendor": "Datadog"
+                },
+                "params": {
+                  "service_name": "String"
+                }
+              }
+            ]
+          }
+          EOF
+
+          # Create a valid expectation file
+          cat > expectations/api.json << 'EOF'
+          {
+            "expectations": [
+              {
+                "name": "API Service Availability",
+                "blueprint_ref": "availability_slo",
+                "inputs": {
+                  "threshold": 99.9,
+                  "window_in_days": 30,
+                  "service_name": "api-gateway"
+                }
+              }
+            ]
+          }
+          EOF
+
       - name: Run Caffeine Language Action
         uses: ./
         with:
-          spec_dir: 'spec'
-          inst_dir: 'inst'
-          output_dir: 'out'
+          blueprint_file: 'blueprints.json'
+          expectations_dir: 'expectations'
+          output_path: 'output'
+
+      - name: Verify output
+        run: |
+          echo "Generated Terraform:"
+          cat output/main.tf

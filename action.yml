@@ -7,23 +7,23 @@ branding:
   color: 'green'
 
 inputs:
-  spec_dir:
-    description: 'Directory containing specification files (relative to repository root)'
+  blueprint_file:
+    description: 'Path to the blueprint JSON file (relative to repository root)'
     required: true
-    default: 'spec'
-  inst_dir:
-    description: 'Directory containing instantiation files (relative to repository root)'
+    default: 'blueprints.json'
+  expectations_dir:
+    description: 'Directory containing expectation JSON files (relative to repository root)'
     required: true
-    default: 'inst'
-  output_dir:
-    description: 'Directory to output compiled files (relative to repository root)'
+    default: 'expectations'
+  output_path:
+    description: 'Output file or directory path (relative to repository root)'
     required: true
-    default: 'out'
+    default: 'output'
 
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.spec_dir }}
-    - ${{ inputs.inst_dir }}
-    - ${{ inputs.output_dir }}
+    - ${{ inputs.blueprint_file }}
+    - ${{ inputs.expectations_dir }}
+    - ${{ inputs.output_path }}

@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-# Get arguments (now relative paths from repository)
-SPEC_DIR="${1:-spec}"
-INST_DIR="${2:-inst}"
-OUTPUT_DIR="${3:-out}"
+# Get arguments
+BLUEPRINT_FILE="${1:-blueprints.json}"
+EXPECTATIONS_DIR="${2:-expectations}"
+OUTPUT_PATH="${3:-output}"
 
 echo "Caffeine Language Compiler"
 echo "=========================="
@@ -13,43 +13,48 @@ echo "=========================="
 WORKSPACE="/github/workspace"
 
 # Convert relative paths to absolute paths within the workspace
-SPEC_PATH="$WORKSPACE/$SPEC_DIR"
-INST_PATH="$WORKSPACE/$INST_DIR"
-OUTPUT_PATH="$WORKSPACE/$OUTPUT_DIR"
+BLUEPRINT_PATH="$WORKSPACE/$BLUEPRINT_FILE"
+EXPECTATIONS_PATH="$WORKSPACE/$EXPECTATIONS_DIR"
+OUTPUT_FULL_PATH="$WORKSPACE/$OUTPUT_PATH"
 
-echo "Specification directory: $SPEC_PATH"
-echo "Instantiation directory: $INST_PATH"
-echo "Output directory: $OUTPUT_PATH"
+echo "Blueprint file: $BLUEPRINT_PATH"
+echo "Expectations directory: $EXPECTATIONS_PATH"
+echo "Output path: $OUTPUT_FULL_PATH"
 
-# Check if directories exist
-if [ ! -d "$SPEC_PATH" ]; then
-    echo "Error: Specification directory not found: $SPEC_PATH"
+# Check if blueprint file exists
+if [ ! -f "$BLUEPRINT_PATH" ]; then
+    echo "Error: Blueprint file not found: $BLUEPRINT_PATH"
     exit 1
 fi
 
-if [ ! -d "$INST_PATH" ]; then
-    echo "Error: Instantiation directory not found: $INST_PATH"
+# Check if expectations directory exists
+if [ ! -d "$EXPECTATIONS_PATH" ]; then
+    echo "Error: Expectations directory not found: $EXPECTATIONS_PATH"
     exit 1
 fi
 
-echo "Found both directories"
+echo "Found blueprint file and expectations directory"
 echo ""
 
 # Show Caffeine version
 echo "Caffeine version:"
-caffeine --help | head -1 || echo "caffeine binary not found"
+caffeine --version || echo "caffeine binary not found"
 echo ""
 
-# Run Caffeine compiler with the repository directories
+# Create output directory if it doesn't exist and output_path looks like a directory
+if [[ "$OUTPUT_PATH" != *.tf ]] && [[ "$OUTPUT_PATH" != *.json ]]; then
+    mkdir -p "$OUTPUT_FULL_PATH"
+fi
+
+# Run Caffeine compiler
 echo "Running Caffeine compiler..."
-if caffeine compile "$SPEC_PATH" "$INST_PATH" "$OUTPUT_PATH"; then
+if caffeine compile "$BLUEPRINT_PATH" "$EXPECTATIONS_PATH" "$OUTPUT_FULL_PATH"; then
     echo ""
     echo "Caffeine compilation SUCCESSFUL!"
-    echo "Your Caffeine specifications have been compiled successfully."
     exit 0
 else
     echo ""
     echo "Caffeine compilation FAILED!"
-    echo "Check your specification and instantiation files for errors."
+    echo "Check your blueprint and expectation files for errors."
     exit 1
 fi

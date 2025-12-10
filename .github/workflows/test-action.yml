@@ -11,37 +11,121 @@ jobs:
   test-action:
     name: Test Caffeine Action
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      # Create test directories and files
+
+      # Create test blueprint and expectation files
       - name: Create test Caffeine files
         run: |
-          mkdir -p spec inst out
-          echo "# Test specification file" > spec/test.spec
-          echo "# Test instantiation file" > inst/test.inst
-          echo "# Test output file" > out/test.out
+          mkdir -p expectations output
+
+          # Create a valid blueprint file
+          cat > blueprints.json << 'EOF'
+          {
+            "blueprints": [
+              {
+                "name": "availability_slo",
+                "artifact_ref": "SLO",
+                "inputs": {
+                  "queries": {
+                    "numerator": "sum:http.requests{service:$$service_name$$,!status:5xx}",
+                    "denominator": "sum:http.requests{service:$$service_name$$}"
+                  },
+                  "value": "numerator / denominator",
+                  "vendor": "Datadog"
+                },
+                "params": {
+                  "service_name": "String"
+                }
+              }
+            ]
+          }
+          EOF
+
+          # Create a valid expectation file
+          cat > expectations/api.json << 'EOF'
+          {
+            "expectations": [
+              {
+                "name": "API Service Availability",
+                "blueprint_ref": "availability_slo",
+                "inputs": {
+                  "threshold": 99.9,
+                  "window_in_days": 30,
+                  "service_name": "api-gateway"
+                }
+              }
+            ]
+          }
+          EOF
 
       - name: Run Caffeine Language Action
         uses: ./
         with:
-          spec_dir: 'spec'
-          inst_dir: 'inst'
-          output_dir: 'out'
-      
+          blueprint_file: 'blueprints.json'
+          expectations_dir: 'expectations'
+          output_path: 'output'
+
+      - name: Verify output exists
+        run: |
+          echo "Generated Terraform:"
+          cat output/main.tf
+
       # Test with different directory structure
       - name: Test with custom directories
         run: |
-          mkdir -p my_specs my_insts my_out
-          echo "# Custom spec file" > my_specs/custom.spec
-          echo "# Custom inst file" > my_insts/custom.inst
-          echo "# Custom output file" > my_out/custom.out
-      
+          mkdir -p custom/expectations custom/output
+
+          # Create blueprint in custom location
+          cat > custom/my_blueprints.json << 'EOF'
+          {
+            "blueprints": [
+              {
+                "name": "latency_slo",
+                "artifact_ref": "SLO",
+                "inputs": {
+                  "queries": {
+                    "numerator": "sum:http.latency.p99{service:$$svc$$,le:500}",
+                    "denominator": "sum:http.latency.p99{service:$$svc$$}"
+                  },
+                  "value": "numerator / denominator",
+                  "vendor": "Datadog"
+                },
+                "params": {
+                  "svc": "String"
+                }
+              }
+            ]
+          }
+          EOF
+
+          # Create expectation in custom location
+          cat > custom/expectations/latency.json << 'EOF'
+          {
+            "expectations": [
+              {
+                "name": "Auth Service Latency P99",
+                "blueprint_ref": "latency_slo",
+                "inputs": {
+                  "threshold": 99.0,
+                  "window_in_days": 7,
+                  "svc": "auth-service"
+                }
+              }
+            ]
+          }
+          EOF
+
       - name: Run with custom directories
         uses: ./
         with:
-          spec_dir: 'my_specs'
-          inst_dir: 'my_insts'
-          output_dir: 'my_out'
+          blueprint_file: 'custom/my_blueprints.json'
+          expectations_dir: 'custom/expectations'
+          output_path: 'custom/output'
+
+      - name: Verify custom output
+        run: |
+          echo "Custom output Terraform:"
+          cat custom/output/main.tf
