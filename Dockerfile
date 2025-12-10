@@ -14,7 +14,7 @@ RUN RELEASE_INFO=$(curl -s https://api.github.com/repos/Brickell-Research/caffei
     && echo "Downloading Caffeine v${VERSION} from ${DOWNLOAD_URL}" \
     && curl -Lo caffeine.tar.gz "$DOWNLOAD_URL" \
     && tar -xzf caffeine.tar.gz \
-    && mv caffeine /usr/local/bin/ \
+    && mv caffeine-*-linux-x64 /usr/local/bin/caffeine \
     && chmod +x /usr/local/bin/caffeine \
     && rm caffeine.tar.gz \
     && caffeine --help
