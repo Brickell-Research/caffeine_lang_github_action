@@ -19,7 +19,7 @@ jobs:
       # Create test blueprint and expectation files
       - name: Create test Caffeine files
         run: |
-          mkdir -p expectations output
+          mkdir -p expectations/org/team output
 
           # Create a valid blueprint file
           cat > blueprints.json << 'EOF'
@@ -28,33 +28,33 @@ jobs:
               {
                 "name": "availability_slo",
                 "artifact_ref": "SLO",
-                "inputs": {
-                  "queries": {
-                    "numerator": "sum:http.requests{service:$$service_name$$,!status:5xx}",
-                    "denominator": "sum:http.requests{service:$$service_name$$}"
-                  },
-                  "value": "numerator / denominator",
-                  "vendor": "Datadog"
-                },
                 "params": {
                   "service_name": "String"
+                },
+                "inputs": {
+                  "vendor": "datadog",
+                  "value": "numerator / denominator",
+                  "queries": {
+                    "numerator": "sum:http.requests{service:$$service_name->service_name$$,!status:5xx}",
+                    "denominator": "sum:http.requests{service:$$service_name->service_name$$}"
+                  }
                 }
               }
             ]
           }
           EOF
 
-          # Create a valid expectation file
-          cat > expectations/api.json << 'EOF'
+          # Create a valid expectation file (must be nested in org/team structure)
+          cat > expectations/org/team/api.json << 'EOF'
           {
             "expectations": [
               {
                 "name": "API Service Availability",
                 "blueprint_ref": "availability_slo",
                 "inputs": {
+                  "service_name": "api-gateway",
                   "threshold": 99.9,
-                  "window_in_days": 30,
-                  "service_name": "api-gateway"
+                  "window_in_days": 30
                 }
               }
             ]
@@ -76,7 +76,7 @@ jobs:
       # Test with different directory structure
       - name: Test with custom directories
         run: |
-          mkdir -p custom/expectations custom/output
+          mkdir -p custom/expectations/myorg/myteam custom/output
 
           # Create blueprint in custom location
           cat > custom/my_blueprints.json << 'EOF'
@@ -85,33 +85,33 @@ jobs:
               {
                 "name": "latency_slo",
                 "artifact_ref": "SLO",
-                "inputs": {
-                  "queries": {
-                    "numerator": "sum:http.latency.p99{service:$$svc$$,le:500}",
-                    "denominator": "sum:http.latency.p99{service:$$svc$$}"
-                  },
-                  "value": "numerator / denominator",
-                  "vendor": "Datadog"
-                },
                 "params": {
                   "svc": "String"
+                },
+                "inputs": {
+                  "vendor": "datadog",
+                  "value": "numerator / denominator",
+                  "queries": {
+                    "numerator": "sum:http.latency.p99{service:$$svc->svc$$,le:500}",
+                    "denominator": "sum:http.latency.p99{service:$$svc->svc$$}"
+                  }
                 }
               }
             ]
           }
           EOF
 
-          # Create expectation in custom location
-          cat > custom/expectations/latency.json << 'EOF'
+          # Create expectation in custom location (must be nested in org/team structure)
+          cat > custom/expectations/myorg/myteam/latency.json << 'EOF'
           {
             "expectations": [
               {
                 "name": "Auth Service Latency P99",
                 "blueprint_ref": "latency_slo",
                 "inputs": {
+                  "svc": "auth-service",
                   "threshold": 99.0,
-                  "window_in_days": 7,
-                  "svc": "auth-service"
+                  "window_in_days": 7
                 }
               }
             ]

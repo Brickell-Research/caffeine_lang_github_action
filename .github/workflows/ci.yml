@@ -15,7 +15,7 @@ jobs:
       # Create test blueprint and expectation files
       - name: Create test Caffeine files
         run: |
-          mkdir -p expectations output
+          mkdir -p expectations/org/team output
 
           # Create a valid blueprint file
           cat > blueprints.json << 'EOF'
@@ -24,33 +24,33 @@ jobs:
               {
                 "name": "availability_slo",
                 "artifact_ref": "SLO",
-                "inputs": {
-                  "queries": {
-                    "numerator": "sum:http.requests{service:$$service_name$$,!status:5xx}",
-                    "denominator": "sum:http.requests{service:$$service_name$$}"
-                  },
-                  "value": "numerator / denominator",
-                  "vendor": "Datadog"
-                },
                 "params": {
                   "service_name": "String"
+                },
+                "inputs": {
+                  "vendor": "datadog",
+                  "value": "numerator / denominator",
+                  "queries": {
+                    "numerator": "sum:http.requests{service:$$service_name->service_name$$,!status:5xx}",
+                    "denominator": "sum:http.requests{service:$$service_name->service_name$$}"
+                  }
                 }
               }
             ]
           }
           EOF
 
-          # Create a valid expectation file
-          cat > expectations/api.json << 'EOF'
+          # Create a valid expectation file (must be nested in org/team structure)
+          cat > expectations/org/team/api.json << 'EOF'
           {
             "expectations": [
               {
                 "name": "API Service Availability",
                 "blueprint_ref": "availability_slo",
                 "inputs": {
+                  "service_name": "api-gateway",
                   "threshold": 99.9,
-                  "window_in_days": 30,
-                  "service_name": "api-gateway"
+                  "window_in_days": 30
                 }
               }
             ]
