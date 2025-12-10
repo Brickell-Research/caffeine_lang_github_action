@@ -4,14 +4,14 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     bash \
-    jq \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Caffeine binary from latest release
-RUN RELEASE_INFO=$(curl -s https://api.github.com/repos/Brickell-Research/caffeine_lang/releases/latest) \
-    && VERSION=$(echo "$RELEASE_INFO" | jq -r '.tag_name' | sed 's/^v//') \
-    && DOWNLOAD_URL=$(echo "$RELEASE_INFO" | jq -r '.assets[] | select(.name | contains("linux-x64")) | .browser_download_url') \
+# Use sed to extract tag_name to avoid jq parsing issues with control chars in release notes
+RUN TAG=$(curl -s https://api.github.com/repos/Brickell-Research/caffeine_lang/releases/latest | sed -n 's/.*"tag_name":\s*"\([^"]*\)".*/\1/p' | head -1) \
+    && VERSION=$(echo "$TAG" | sed 's/^v//') \
+    && DOWNLOAD_URL="https://github.com/Brickell-Research/caffeine_lang/releases/download/${TAG}/caffeine-${VERSION}-linux-x64.tar.gz" \
     && echo "Downloading Caffeine v${VERSION} from ${DOWNLOAD_URL}" \
     && curl -Lo caffeine.tar.gz "$DOWNLOAD_URL" \
     && tar -xzf caffeine.tar.gz \
