@@ -1,11 +1,12 @@
-FROM alpine:3.18
+FROM debian:bookworm-slim
 
 # Install minimal dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     bash \
     jq \
-    && rm -rf /var/cache/apk/*
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Download and install Caffeine binary from latest release
 RUN RELEASE_INFO=$(curl -s https://api.github.com/repos/Brickell-Research/caffeine_lang/releases/latest) \
