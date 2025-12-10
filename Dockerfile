@@ -17,8 +17,7 @@ RUN TAG=$(curl -s https://api.github.com/repos/Brickell-Research/caffeine_lang/r
     && tar -xzf caffeine.tar.gz \
     && mv caffeine-*-linux-x64 /usr/local/bin/caffeine \
     && chmod +x /usr/local/bin/caffeine \
-    && rm caffeine.tar.gz \
-    && caffeine --help
+    && rm caffeine.tar.gz
 
 # Create workspace
 WORKDIR /app
